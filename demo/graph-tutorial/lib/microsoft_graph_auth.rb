@@ -15,9 +15,9 @@ module OmniAuth
 
       # Configure the Microsoft identity platform endpoints
       option :client_options,
-             site: 'https://login.microsoftonline.com',
-             authorize_url: '/common/oauth2/v2.0/authorize',
-             token_url: '/common/oauth2/v2.0/token'
+             :site => 'https://login.microsoftonline.com',
+             :authorize_url => '/common/oauth2/v2.0/authorize',
+             :token_url => '/common/oauth2/v2.0/token'
 
       # Send the scope parameter during authorize
       option :authorize_options, [:scope]
@@ -34,7 +34,7 @@ module OmniAuth
 
       def raw_info
         # Get user profile information from the /me endpoint
-        @raw_info ||= access_token.get('https://graph.microsoft.com/v1.0/me').parsed
+        @raw_info ||= access_token.get('https://graph.microsoft.com/v1.0/me?$select=displayName,mail,mailboxSettings,userPrincipalName').parsed
       end
 
       def authorize_params

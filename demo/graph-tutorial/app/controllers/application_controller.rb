@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
   # <SaveInSessionSnippet>
   def save_in_session(auth_hash)
     # Save the token info
-    session[:graph_token_hash] = auth_hash.dig(:credentials)
+    session[:graph_token_hash] = auth_hash[:credentials]
     # Save the user's display name
     session[:user_name] = auth_hash.dig(:extra, :raw_info, :displayName)
     # Save the user's email address
@@ -26,6 +26,8 @@ class ApplicationController < ActionController::Base
     # userPrincipalName
     session[:user_email] = auth_hash.dig(:extra, :raw_info, :mail) ||
                            auth_hash.dig(:extra, :raw_info, :userPrincipalName)
+    # Save the user's time zone
+    session[:user_timezone] = auth_hash.dig(:extra, :raw_info, :mailboxSettings, :timeZone)
   end
   # </SaveInSessionSnippet>
 
@@ -35,6 +37,10 @@ class ApplicationController < ActionController::Base
 
   def user_email
     session[:user_email]
+  end
+
+  def user_timezone
+    session[:user_timezone]
   end
 
   # <AccessTokenSnippet>
@@ -62,7 +68,7 @@ class ApplicationController < ActionController::Base
 
     token = OAuth2::AccessToken.new(
       oauth_strategy.client, token_hash[:token],
-      refresh_token: token_hash[:refresh_token]
+      :refresh_token => token_hash[:refresh_token]
     )
 
     # Refresh the tokens
